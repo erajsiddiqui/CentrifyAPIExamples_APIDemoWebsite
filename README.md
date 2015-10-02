@@ -5,8 +5,11 @@ This example is a full ASP.NET website with C# server code and JavaScript client
 Site features include:
 
 -Login / MFA using authentication profiles
+
 -Logout
+
 -Centrify apps for the logged in user
+
 -User Management
 
 
