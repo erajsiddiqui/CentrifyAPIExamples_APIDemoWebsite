@@ -59,7 +59,7 @@ public partial class Account_Manage : System.Web.UI.Page
 
     protected void FindUser(object sender, EventArgs e)
     {
-        string strFindUserJSON = @"{""Script"":""select * from dsusers where SystemName = '" + FindUser_UserName.Text + @"'""}";
+        string strFindUserJSON = @"{""Script"":""select * from dsusers where SystemName = '" + FindUser_UserName.Text + @"';"",""Args"":{""PageNumber"":1,""PageSize"":10000,""Limit"":10000,""SortBy"":"""",""direction"":""False"",""Caching"":-1}}";
         Centrify_API_Interface centFindUser = new Centrify_API_Interface().MakeRestCall(CentQueryURL, strFindUserJSON);
         var jssFindUser = new JavaScriptSerializer();
         Dictionary<string, dynamic> centFindUser_Dict = jssFindUser.Deserialize<Dictionary<string, dynamic>>(centFindUser.returnedResponse);
@@ -95,7 +95,7 @@ public partial class Account_Manage : System.Web.UI.Page
             Account_Locked.Visible = true;
             Account_Locked_Label.Visible = true;
             ModifyUser_Button.Visible = true;
-            ModifyUser_Button.Enabled = false; // Broken
+            ModifyUser_Button.Enabled = true; // Broken
 
             Find_User_Button.Visible = false;
             FindUser_UserName.Visible = false;
@@ -131,7 +131,7 @@ public partial class Account_Manage : System.Web.UI.Page
         {
             if (SetPassword.Text != null)
             {
-                string strSetPassJSON = @"{""ID"":""" + Session["UserId"].ToString() + @",""ConfrimPassword"":""" + SetPassword.Text + @""",""newPassword"":""" + SetPassword.Text + @"""}";
+                string strSetPassJSON = @"{""ID"":""" + Session["UserId"].ToString() + @""",""ConfrimPassword"":""" + SetPassword.Text + @""",""newPassword"":""" + SetPassword.Text + @"""}";
                 Centrify_API_Interface centSetPass = new Centrify_API_Interface().MakeRestCall(CentSetPassURL, strSetPassJSON);
                 var jssSetPass = new JavaScriptSerializer();
                 Dictionary<string, dynamic> centSetPass_Dict = jss.Deserialize<Dictionary<string, dynamic>>(centSetPass.returnedResponse);
@@ -149,5 +149,17 @@ public partial class Account_Manage : System.Web.UI.Page
         {
             ResultMessage.Text = "Failed to Modify user: " + centSetUser.returnedResponse;
         }
+
+        ResultMessage.Visible = true;
+
+        //Reset
+        Find_User_Button.Visible = true;
+        FindUser_UserName.Visible = true;
+        FindUser_UserName_Label.Visible = true;
+
+        UserName.Text = null;
+        Password.Text = null;
+        Account_Enabled.Checked = false;
+        Account_Locked.Checked = false;
     }
 }
