@@ -564,6 +564,7 @@ public partial class Account_Login : Page
                 {
                     //More then one required Mech
                     SortedList<string, string> items = new SortedList<string, string>();
+                    int iDupCount = 1;
                     
                     foreach (Dictionary<string, object> mech in mechs)
                     {
@@ -600,7 +601,16 @@ public partial class Account_Login : Page
                         }
 
                         string strFieldValue = mech["MechanismId"].ToString();
-                        items.Add(strFieldName, strFieldValue);
+
+                        if (!items.ContainsKey(strFieldName))
+                        {
+                            items.Add(strFieldName, strFieldValue);
+                        }
+                        else
+                        {
+                            items.Add(strFieldName + "(" + iDupCount + ")", strFieldValue);
+                            iDupCount++;
+                        }
                     }
 
                     try
@@ -632,6 +642,7 @@ public partial class Account_Login : Page
                 else
                 {
                     SortedList<string, string> items = new SortedList<string, string>();
+                    int iDupCount = 1;
 
                     //Only one required Mech
                     foreach (Dictionary<string, object> mech in mechs)
@@ -667,7 +678,16 @@ public partial class Account_Login : Page
                             }
 
                             string strFieldValue = mech["MechanismId"].ToString();
-                            items.Add(strFieldName, strFieldValue);
+
+                            if (!items.ContainsKey(strFieldName))
+                            {
+                                items.Add(strFieldName, strFieldValue);
+                            }
+                            else
+                            {
+                                items.Add(strFieldName + "(" + iDupCount + ")", strFieldValue);
+                                iDupCount++;
+                            }
 
                             Password.Visible = false;
                             Password_Label.Visible = false;
@@ -705,7 +725,7 @@ public partial class Account_Login : Page
                 foreach (ArrayList mechs in centStartAuth_Mech2.Values)
                 {
                     SortedList<string, string> items = new SortedList<string, string>();
-
+                    int iDupCount = 1;
                     foreach (Dictionary<string, object> mech in mechs)
                     {
                         string strFieldName = "";
@@ -743,7 +763,18 @@ public partial class Account_Login : Page
                             }
 
                             string strFieldValue = mech["MechanismId"].ToString();
-                            items.Add(strFieldName, strFieldValue);               
+
+                            if (!items.ContainsKey(strFieldName))
+                            {
+                                items.Add(strFieldName, strFieldValue);
+                            }
+                            else
+                            {
+                                items.Add(strFieldName + "(" + iDupCount + ")", strFieldValue);
+                                iDupCount++;
+                            }
+
+                                           
                         }
                         else
                         {
