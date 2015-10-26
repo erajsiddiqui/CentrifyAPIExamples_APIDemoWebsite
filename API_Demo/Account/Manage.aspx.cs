@@ -10,11 +10,12 @@ using System.Collections;
 
 public partial class Account_Manage : System.Web.UI.Page
 {
-    public static string CentCreateUserURL = ConfigurationManager.AppSettings["CentCreateUserURL"].ToString();
-    public static string CentQueryURL = ConfigurationManager.AppSettings["CentQueryURL"].ToString();
-    public static string CentChangeUserURL = ConfigurationManager.AppSettings["CentChangeUserURL"].ToString();
-    public static string CentSetUserURL = ConfigurationManager.AppSettings["CentSetUserURL"].ToString();
-    public static string CentSetPassURL = ConfigurationManager.AppSettings["CentSetPassURL"].ToString();
+    public static string CentPodURL = ConfigurationManager.AppSettings["CentPodURL"].ToString();
+    public static string CentCreateUserURL = CentPodURL + ConfigurationManager.AppSettings["CentCreateUserURL"].ToString();
+    public static string CentQueryURL = CentPodURL + ConfigurationManager.AppSettings["CentQueryURL"].ToString();
+    public static string CentChangeUserURL = CentPodURL + ConfigurationManager.AppSettings["CentChangeUserURL"].ToString();
+    public static string CentSetUserURL = CentPodURL + ConfigurationManager.AppSettings["CentSetUserURL"].ToString();
+    public static string CentSetPassURL = CentPodURL + ConfigurationManager.AppSettings["CentSetPassURL"].ToString();
 
     protected void Page_Load(object sender, EventArgs e)
     {

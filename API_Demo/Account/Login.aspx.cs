@@ -107,6 +107,8 @@ public partial class Account_Login : Page
         //Called by Next Button
         protected void Next_Login(object sender, EventArgs e)
         {
+            Session["NewPodURL"] = ConfigurationManager.AppSettings["CentPodURL"].ToString();
+
             AuthMethod.Items.Clear();
             AuthMethod_Second.Items.Clear();
 
@@ -114,15 +116,30 @@ public partial class Account_Login : Page
 
             //Populate MFA Dropdown
             string strStartAuthJSON = @"{""User"":""" + UserName.Text + @""", ""Version"":""1.0""}";
-            Centrify_API_Interface centStartAuth = new Centrify_API_Interface().MakeRestCall(CentStartAuthURL, strStartAuthJSON);
+            Centrify_API_Interface centStartAuth = new Centrify_API_Interface().MakeRestCall(Session["NewPodURL"].ToString() + CentStartAuthURL, strStartAuthJSON);
             var jss = new JavaScriptSerializer();
             Dictionary<string, dynamic> centStartAuth_Dict = jss.Deserialize<Dictionary<string, dynamic>>(centStartAuth.returnedResponse);
 
-            //Store Result in session
-            Session["StartAuth"] = centStartAuth.returnedResponse;
-
             if (centStartAuth_Dict["success"].ToString() == "True")
             {
+                //Detect if a redirect to pod was returned
+                if (centStartAuth_Dict["Result"].ContainsKey("PodFqdn"))
+                {
+                    Session["NewPodURL"] = "https://" + centStartAuth_Dict["Result"]["PodFqdn"];
+                    string test = Session["NewPodURL"].ToString() + CentStartAuthURL;
+                    Centrify_API_Interface centStartAuth_redirect = new Centrify_API_Interface().MakeRestCall(Session["NewPodURL"].ToString() + CentStartAuthURL, strStartAuthJSON);
+
+                    //Store Redirected Result in session
+                    Session["StartAuth"] = centStartAuth_redirect.returnedResponse;
+                    centStartAuth_Dict = jss.Deserialize<Dictionary<string, dynamic>>(centStartAuth_redirect.returnedResponse);
+                }
+                else
+                {
+                    //Store First Result in session
+                    Session["StartAuth"] = centStartAuth.returnedResponse;
+                }
+
+                //Store Centrify session information in site session
                 Session["TenantId"] = centStartAuth_Dict["Result"]["TenantId"];
                 Session["SessionId"] = centStartAuth_Dict["Result"]["SessionId"];
 
@@ -265,7 +282,7 @@ public partial class Account_Login : Page
                 else if (strAdvanceAuthJSON != null)
                 {
                     //Start Oob - Send MFA
-                    Centrify_API_Interface centAdvanceAuth = new Centrify_API_Interface().MakeRestCall(CentAdvanceAuthURL, strAdvanceAuthJSON);
+                    Centrify_API_Interface centAdvanceAuth = new Centrify_API_Interface().MakeRestCall(Session["NewPodURL"].ToString() + CentAdvanceAuthURL, strAdvanceAuthJSON);
                     var jssAdvanceAuth = new JavaScriptSerializer();
                     Dictionary<string, dynamic> centAdvanceAuth_Dict = jssAdvanceAuth.Deserialize<Dictionary<string, dynamic>>(centAdvanceAuth.returnedResponse);
                     
@@ -402,7 +419,7 @@ public partial class Account_Login : Page
             //Get Mechs for Pass Reset
             string strAdvanceAuthJSON = @"{""TenantId"":""" + Session["TenantId"].ToString() + @""",""SessionId"":""" + Session["SessionId"].ToString() + @""",""PersistentLogin"":" + RememberMe.Checked.ToString().ToLower() + @",""Action"":""ForgotPassword""}";
 
-            Centrify_API_Interface centAdvanceAuth = new Centrify_API_Interface().MakeRestCall(CentAdvanceAuthURL, strAdvanceAuthJSON);
+            Centrify_API_Interface centAdvanceAuth = new Centrify_API_Interface().MakeRestCall(Session["NewPodURL"].ToString() + CentAdvanceAuthURL, strAdvanceAuthJSON);
 
             //Reset Start Auth
             Session["StartAuth"] = centAdvanceAuth.returnedResponse;
@@ -444,7 +461,7 @@ public partial class Account_Login : Page
         protected void LogOut_Click(object sender, EventArgs e)
         {
             //Log Out from Centrify
-            Centrify_API_Interface centLogOut = new Centrify_API_Interface().MakeRestCall(CentLogOutURL, "");
+            Centrify_API_Interface centLogOut = new Centrify_API_Interface().MakeRestCall(Session["NewPodURL"].ToString() + CentLogOutURL, "");
             var jss = new JavaScriptSerializer();
             Dictionary<string, dynamic> centLogOut_Dict = jss.Deserialize<Dictionary<string, dynamic>>(centLogOut.returnedResponse);
 
@@ -468,7 +485,7 @@ public partial class Account_Login : Page
         //Processes all AdvanceAuth calls
         public string ProcessAdvanceAuth(string strJSON)
         {
-            Centrify_API_Interface centAdvanceAuth = new Centrify_API_Interface().MakeRestCall(CentAdvanceAuthURL, strJSON);
+            Centrify_API_Interface centAdvanceAuth = new Centrify_API_Interface().MakeRestCall(Session["NewPodURL"].ToString() + CentAdvanceAuthURL, strJSON);
             var jssAdvanceAuthPoll = new JavaScriptSerializer();
             Dictionary<string, dynamic> centAdvanceAuth_Dict = jssAdvanceAuthPoll.Deserialize<Dictionary<string, dynamic>>(centAdvanceAuth.returnedResponse);
 

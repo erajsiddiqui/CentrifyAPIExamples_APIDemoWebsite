@@ -20,7 +20,7 @@ public partial class Contact : Page
             if (Session["OTP"].ToString() != "")
             {
                 string loginJSON = @"{""force"":""True""}";
-                Centrify_API_Interface cent = new Centrify_API_Interface().MakeRestCall(CentGetAppsURL, loginJSON);
+                Centrify_API_Interface cent = new Centrify_API_Interface().MakeRestCall(CentPodURL + CentGetAppsURL, loginJSON);
 
                 string strApps = cent.returnedResponse;
 
@@ -60,7 +60,7 @@ public partial class Contact : Page
     {
         HyperLink link = new HyperLink();
         link.ID = "CentrifyApp" + count;
-        link.NavigateUrl = CentRunAppURL + strAppKey + "&Auth=" + Session["OTP"].ToString();
+        link.NavigateUrl = CentPodURL + CentRunAppURL + strAppKey + "&Auth=" + Session["OTP"].ToString();
         link.Text = strName;
         link.ImageUrl = CentPodURL + strIcon;
         link.ImageHeight = 75;
