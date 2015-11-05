@@ -10,12 +10,10 @@ using System.Collections;
 
 public partial class Account_Manage : System.Web.UI.Page
 {
-    public static string CentPodURL = ConfigurationManager.AppSettings["CentPodURL"].ToString();
-    public static string CentCreateUserURL = CentPodURL + ConfigurationManager.AppSettings["CentCreateUserURL"].ToString();
-    public static string CentQueryURL = CentPodURL + ConfigurationManager.AppSettings["CentQueryURL"].ToString();
-    public static string CentChangeUserURL = CentPodURL + ConfigurationManager.AppSettings["CentChangeUserURL"].ToString();
-    public static string CentSetUserURL = CentPodURL + ConfigurationManager.AppSettings["CentSetUserURL"].ToString();
-    public static string CentSetPassURL = CentPodURL + ConfigurationManager.AppSettings["CentSetPassURL"].ToString();
+    public static string CentCreateUserURL = ConfigurationManager.AppSettings["CentCreateUserURL"].ToString();
+    public static string CentQueryURL = ConfigurationManager.AppSettings["CentQueryURL"].ToString();
+    public static string CentSetUserURL = ConfigurationManager.AppSettings["CentSetUserURL"].ToString();
+    public static string CentSetPassURL = ConfigurationManager.AppSettings["CentSetPassURL"].ToString();
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -42,7 +40,7 @@ public partial class Account_Manage : System.Web.UI.Page
     protected void CreateUser(object sender, EventArgs e)
     {
         string strCreateUserJSON = "{Name:'" + UserName.Text + "', Mail:'" + UserName.Text + "', Password:'" + Password.Text + "'}";
-        Centrify_API_Interface centCreateUser = new Centrify_API_Interface().MakeRestCall(CentCreateUserURL, strCreateUserJSON);
+        Centrify_API_Interface centCreateUser = new Centrify_API_Interface().MakeRestCall(Session["NewPodURL"].ToString() + CentCreateUserURL, strCreateUserJSON);
         var jssAdvanceAuthPoll = new JavaScriptSerializer();
         Dictionary<string, dynamic> centCreateUser_Dict = jssAdvanceAuthPoll.Deserialize<Dictionary<string, dynamic>>(centCreateUser.returnedResponse);
 
@@ -61,7 +59,7 @@ public partial class Account_Manage : System.Web.UI.Page
     protected void FindUser(object sender, EventArgs e)
     {
         string strFindUserJSON = @"{""Script"":""select * from dsusers where SystemName = '" + FindUser_UserName.Text + @"';"",""Args"":{""PageNumber"":1,""PageSize"":10000,""Limit"":10000,""SortBy"":"""",""direction"":""False"",""Caching"":-1}}";
-        Centrify_API_Interface centFindUser = new Centrify_API_Interface().MakeRestCall(CentQueryURL, strFindUserJSON);
+        Centrify_API_Interface centFindUser = new Centrify_API_Interface().MakeRestCall(Session["NewPodURL"].ToString() + CentQueryURL, strFindUserJSON);
         var jssFindUser = new JavaScriptSerializer();
         Dictionary<string, dynamic> centFindUser_Dict = jssFindUser.Deserialize<Dictionary<string, dynamic>>(centFindUser.returnedResponse);
 
@@ -124,7 +122,7 @@ public partial class Account_Manage : System.Web.UI.Page
         }
 
         string strModifyUserJSON = @"{""ID"":""" + Session["UserId"].ToString() + @""", ""enableState"":" + Account_Enabled.Checked.ToString().ToLower() + @",""state"":""" + strState + @"""}";
-        Centrify_API_Interface centSetUser = new Centrify_API_Interface().MakeRestCall(CentSetUserURL, strModifyUserJSON);
+        Centrify_API_Interface centSetUser = new Centrify_API_Interface().MakeRestCall(Session["NewPodURL"].ToString() + CentSetUserURL, strModifyUserJSON);
         var jss = new JavaScriptSerializer();
         Dictionary<string, dynamic> centSetUser_Dict = jss.Deserialize<Dictionary<string, dynamic>>(centSetUser.returnedResponse);
 
@@ -133,7 +131,7 @@ public partial class Account_Manage : System.Web.UI.Page
             if (SetPassword.Text != null)
             {
                 string strSetPassJSON = @"{""ID"":""" + Session["UserId"].ToString() + @""",""ConfrimPassword"":""" + SetPassword.Text + @""",""newPassword"":""" + SetPassword.Text + @"""}";
-                Centrify_API_Interface centSetPass = new Centrify_API_Interface().MakeRestCall(CentSetPassURL, strSetPassJSON);
+                Centrify_API_Interface centSetPass = new Centrify_API_Interface().MakeRestCall(Session["NewPodURL"].ToString() + CentSetPassURL, strSetPassJSON);
                 var jssSetPass = new JavaScriptSerializer();
                 Dictionary<string, dynamic> centSetPass_Dict = jss.Deserialize<Dictionary<string, dynamic>>(centSetPass.returnedResponse);
                 if (centSetPass_Dict["success"].ToString() == "True")

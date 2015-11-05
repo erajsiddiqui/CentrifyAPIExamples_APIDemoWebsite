@@ -287,15 +287,16 @@ public partial class Account_Login : Page
                     Dictionary<string, dynamic> centAdvanceAuth_Dict = jssAdvanceAuth.Deserialize<Dictionary<string, dynamic>>(centAdvanceAuth.returnedResponse);
                     
                     if (centAdvanceAuth_Dict["success"].ToString() == "True")
-                    {
-                        //User Pass Only - No MFA - Done
+                    {                        
                         if (centAdvanceAuth_Dict["Result"]["Summary"].ToString() == "LoginSuccess")
                         {
                             if (centAdvanceAuth.returnedCookie != null)
                             {
                                 Session["podFQDN"] = centAdvanceAuth_Dict["Result"]["PodFqdn"].ToString();
-                                Response.Cookies.Add(centAdvanceAuth.returnedCookie);
                                 Session["OTP"] = centAdvanceAuth_Dict["Result"]["Auth"].ToString();
+                                Session["ASPXAUTH"] = centAdvanceAuth.returnedCookie.Value;
+                                HttpContext.Current.Response.Cookies.Add(centAdvanceAuth.returnedCookie);
+                                HttpContext.Current.Response.Headers.Add("Authorization", "Bearer " + Session["ASPXAUTH"].ToString());
 
                                 String TransferPage = "<script>window.open('../" + Request.QueryString["ReturnUrl"] + "','_self');</script>";
                                 ScriptManager.RegisterStartupScript(Page, Page.GetType(), "temp", TransferPage, false);
@@ -499,10 +500,11 @@ public partial class Account_Login : Page
                 {
                     if (centAdvanceAuth.returnedCookie != null)
                     {
-                        Session["podFQDN"] = centAdvanceAuth_Dict["Result"]["PodFqdn"].ToString();
-                        Context.Response.Cookies.Add(centAdvanceAuth.returnedCookie);
+                        Session["podFQDN"] = centAdvanceAuth_Dict["Result"]["PodFqdn"].ToString();                        
                         Session["OTP"] = centAdvanceAuth_Dict["Result"]["Auth"].ToString();
-                     
+                        Session["ASPXAUTH"] = centAdvanceAuth.returnedCookie.Value;
+                        HttpContext.Current.Response.Cookies.Add(centAdvanceAuth.returnedCookie);
+                        HttpContext.Current.Response.Headers.Add("Authorization", "Bearer " + Session["ASPXAUTH"].ToString());                     
 
                         String TransferPage = "<script>window.open('../" + Context.Request.QueryString["ReturnUrl"] + "','_self');</script>";
                         ScriptManager.RegisterStartupScript(Page, Page.GetType(), "temp", TransferPage, false);                       

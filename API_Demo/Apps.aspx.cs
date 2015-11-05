@@ -6,11 +6,13 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Script.Serialization;
 using System.Configuration;
+using System.IO;
+using System.Drawing;
+using System.Net;
 
 public partial class Contact : Page
 {
     public static string CentGetAppsURL = ConfigurationManager.AppSettings["CentGetAppsURL"].ToString();
-    public static string CentPodURL = ConfigurationManager.AppSettings["CentPodURL"].ToString();
     public static string CentRunAppURL = ConfigurationManager.AppSettings["CentRunAppURL"].ToString();
 
     protected void Page_Load(object sender, EventArgs e)
@@ -20,7 +22,7 @@ public partial class Contact : Page
             if (Session["OTP"].ToString() != "")
             {
                 string loginJSON = @"{""force"":""True""}";
-                Centrify_API_Interface cent = new Centrify_API_Interface().MakeRestCall(CentPodURL + CentGetAppsURL, loginJSON);
+                Centrify_API_Interface cent = new Centrify_API_Interface().MakeRestCall(Session["NewPodURL"].ToString() + CentGetAppsURL, loginJSON);
 
                 string strApps = cent.returnedResponse;
 
@@ -59,13 +61,23 @@ public partial class Contact : Page
     protected void AddUrls(string strAppKey, string strName, string strIcon, int count)
     {
         HyperLink link = new HyperLink();
+          
         link.ID = "CentrifyApp" + count;
-        link.NavigateUrl = CentPodURL + CentRunAppURL + strAppKey + "&Auth=" + Session["OTP"].ToString();
+        link.NavigateUrl = Session["NewPodURL"].ToString() + CentRunAppURL + strAppKey + "&Auth=" + Session["OTP"].ToString();
         link.Text = strName;
-        link.ImageUrl = CentPodURL + strIcon;
+
+        //If image is unsecured global
+        if (strIcon.Contains("vfslow"))
+        {
+            link.ImageUrl = Session["NewPodURL"].ToString() + strIcon;
+        }
+        else//If image needs a cookie or header to access
+        {
+            link.ImageUrl = "Helpers/GetSecureImage.aspx?Icon=" + strIcon;
+        }
+       
         link.ImageHeight = 75;
         link.ImageWidth = 75;
-
 
         if (count % 7 == 0)
         {
