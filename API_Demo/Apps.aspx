@@ -12,7 +12,7 @@
             </p>
     </div>
     <div class="row" runat="server" id="Apps">
-        <h2>Centrify Applicaitons</h2>
+        <h2>Centrify Applications</h2>
             <p>
                 This is a list of applications from Centrify that you are allowed to access
             </p>
