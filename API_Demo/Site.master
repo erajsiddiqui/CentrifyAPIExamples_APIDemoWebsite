@@ -59,6 +59,7 @@
                             <ul class="nav navbar-nav navbar-right">
                               <%--  <li><a runat="server" href="~/Account/Register">Register</a></li> --%>
                                 <li><a runat="server" href="~/Account/Manage">Manage</a></li>
+                                <li><a runat="server" href="~/Account/MyAccount">MyAccount</a></li>
                                 <li><a runat="server" href="~/Account/Login">Login</a></li>
                             </ul>
                         </AnonymousTemplate>

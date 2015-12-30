@@ -78,8 +78,29 @@
                             <div class="col-md-10"> 
                                 <asp:Literal runat="server" ID="ResultMessage">JSON Result Message</asp:Literal> 
                             </div>
-                        </div>
-                    </div>
+                        </div>                        
+                        <div class="form-group">
+                            <h2>Manage Roles</h2>
+                            <h4>Create a role by typing in a name and pressing the create role button</h4>
+                            <asp:Label runat="server" ID="CreateRole_Name_Label" AssociatedControlID="CreateRole_Name" CssClass="col-md-2 control-label">Role Name</asp:Label>
+                            <div class="form-group">                               
+                                <asp:TextBox runat="server" ID="CreateRole_Name" CssClass="form-control" />                                          
+                            </div>
+                            <div class="col-md-offset-5" runat="server" ID="CreateRole_Button_Div" >
+                                <asp:Button runat="server" OnClick="CreateRole" Text="Create Role" ID="CreateRole_Button" CssClass="btn btn-default" />                       
+                            </div>
+                            <h4>Add a user to a role by typing in their user name and selecting a role from the drop down</h4>
+                            <asp:Label runat="server" ID="UserToAdd_Label" AssociatedControlID="UserToAdd" CssClass="col-md-2 control-label">User To Add</asp:Label>
+                            <div class="form-group">                               
+                                <asp:TextBox runat="server" ID="UserToAdd" CssClass="form-control" />                                          
+                            </div>
+                            <asp:Label runat="server" ID="Roles_Label" AssociatedControlID="Roles_Dropdown" CssClass="col-md-2 control-label">Roles</asp:Label>
+                            <asp:DropDownList runat="server" ID="Roles_Dropdown" AppendDataBoundItems="true" AutoPostBack="true" CssClass="form-control"/> 
+                            <div class="col-md-offset-5" runat="server" ID="Div1" >
+                                <asp:Button runat="server" OnClick="AddUserToRole" Text="Add User To Role" ID="AdUserToRole_Button" CssClass="btn btn-default" />                      
+                            </div>
+                        </div>                    
+                    </div>                    
                 </div>                
         </ContentTemplate>
     </asp:UpdatePanel>
