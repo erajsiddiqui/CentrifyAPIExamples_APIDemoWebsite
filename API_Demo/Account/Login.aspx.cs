@@ -60,6 +60,8 @@ public partial class Account_Login : Page
             ConfirmNewPass_Label.Visible = false;
             ConfirmNewPass.Visible = false;
             ForgotPass_Submit_button.Visible = false;
+            SecretQuestion.Visible = false;
+            SecretQuestion_Label.Visible = false;
 
             if (!IsPostBack)
             {
@@ -251,7 +253,14 @@ public partial class Account_Login : Page
                     //Password + MFA
                     if (strSelectedMechId != null)
                     {
-                        strAdvanceAuthJSON = @"{""TenantId"":""" + Session["TenantId"].ToString() + @""",""SessionId"":""" + Session["SessionId"].ToString() + @""",""PersistentLogin"":" + RememberMe.Checked.ToString().ToLower() + @",""MultipleOperations"":[{""MechanismId"":""" + strUPMechId + @""",""Answer"":""" + @Password.Text + @""",""Action"":""Answer""},{""MechanismId"":""" + strSelectedMechId + @""",""Action"":""StartOOB""}]}";
+                        if (strSelectedAnswerType == "Text")
+                        {
+                            strAdvanceAuthJSON = @"{""TenantId"":""" + Session["TenantId"].ToString() + @""",""SessionId"":""" + Session["SessionId"].ToString() + @""",""PersistentLogin"":" + RememberMe.Checked.ToString().ToLower() + @",""MultipleOperations"":[{""MechanismId"":""" + strUPMechId + @""",""Answer"":""" + @Password.Text + @""",""Action"":""Answer""},{""MechanismId"":""" + strSelectedMechId + @""",""Answer"":""" + SecretQuestion.Text + @""",""Action"":""Answer""}]}";
+                        }
+                        else
+                        {
+                            strAdvanceAuthJSON = @"{""TenantId"":""" + Session["TenantId"].ToString() + @""",""SessionId"":""" + Session["SessionId"].ToString() + @""",""PersistentLogin"":" + RememberMe.Checked.ToString().ToLower() + @",""MultipleOperations"":[{""MechanismId"":""" + strUPMechId + @""",""Answer"":""" + @Password.Text + @""",""Action"":""Answer""},{""MechanismId"":""" + strSelectedMechId + @""",""Action"":""StartOOB""}]}";
+                        }
                     }                    
                     //Password Only - No MFA
                     else
@@ -333,6 +342,12 @@ public partial class Account_Login : Page
                                     MFAMessage.Visible = true;
 
                                     if (strSelectedName == "OTP")
+                                    {
+                                        //StartPoll();
+                                        Timer1.Enabled = true;
+                                    }
+
+                                    if (strSelectedName == "SMS")
                                     {
                                         //StartPoll();
                                         Timer1.Enabled = true;
@@ -611,7 +626,8 @@ public partial class Account_Login : Page
                         }
                         else if (mech["Name"].ToString() == "SQ")
                         {
-                            strFieldName = "Secret Question" + mech["Question"];
+                            strFieldName = "Secret Question";
+                            SecretQuestion_Label.Text = "Secret Question: " + mech["Question"];
                         }
                         else
                         {
@@ -688,7 +704,8 @@ public partial class Account_Login : Page
                             }
                             else if (mech["Name"].ToString() == "SQ")
                             {
-                                strFieldName = "Secret Question" + mech["Question"];
+                                strFieldName = "Secret Question";
+                                SecretQuestion_Label.Text = "Secret Question: " + mech["Question"];
                             }
                             else
                             {
@@ -773,7 +790,8 @@ public partial class Account_Login : Page
                             }
                             else if (mech["Name"].ToString() == "SQ")
                             {
-                                strFieldName = "Secret Question" + mech["Question"];
+                                strFieldName = "Secret Question";
+                                SecretQuestion_Label.Text = "Secret Question: " + mech["Question"];
                             }
                             else
                             {
@@ -859,6 +877,20 @@ public partial class Account_Login : Page
         }
         protected void AuthMethod_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (AuthMethod.Items.FindByText("Secret Question") != null)
+            {
+                if (AuthMethod.SelectedItem.Text == "Secret Question")
+                {
+                    SecretQuestion.Visible = true;
+                    SecretQuestion_Label.Visible = true;
+                }
+                else
+                {
+                    SecretQuestion.Visible = false;
+                    SecretQuestion_Label.Visible = false;
+                }
+            }
+
             if (AuthMethod.Items.FindByText("Password") != null)
             {
                 if (AuthMethod.SelectedItem.Text == "Password")
@@ -870,7 +902,7 @@ public partial class Account_Login : Page
                 {
                     Password.Visible = false;
                     Password_Label.Visible = false;
-                }
+                }               
 
                 Next.Visible = false;
                 RememberMe.Visible = true;
@@ -895,8 +927,22 @@ public partial class Account_Login : Page
         }
         protected void AuthMethod_Second_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (AuthMethod_Second.Items.FindByText("Password") != null)
+            if (AuthMethod_Second.Items.FindByText("Secret Question") != null)
             {
+                if (AuthMethod_Second.SelectedItem.Text == "Secret Question")
+                {
+                    SecretQuestion.Visible = true;
+                    SecretQuestion_Label.Visible = true;
+                }
+                else
+                {
+                    SecretQuestion.Visible = false;
+                    SecretQuestion_Label.Visible = false;
+                }
+            }
+
+            if (AuthMethod_Second.Items.FindByText("Password") != null)
+            {             
                 if (AuthMethod_Second.SelectedItem.Text == "Password")
                 {
                     Password.Visible = true;
@@ -907,6 +953,7 @@ public partial class Account_Login : Page
                     Password.Visible = false;
                     Password_Label.Visible = false;
                 }
+               
 
                 Next.Visible = false;
                 RememberMe.Visible = true;

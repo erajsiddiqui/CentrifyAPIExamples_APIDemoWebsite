@@ -56,6 +56,10 @@
                                 <asp:DropDownList runat="server" ID="AuthMethod" AppendDataBoundItems="true" AutoPostBack="true" OnSelectedIndexChanged="AuthMethod_SelectedIndexChanged" CssClass="form-control"/>     
                                 <asp:DropDownList runat="server" ID="AuthMethod_Second" AppendDataBoundItems="true" AutoPostBack="true" OnSelectedIndexChanged="AuthMethod_Second_SelectedIndexChanged" CssClass="form-control"/>               
                             </div>
+                            <asp:Label runat="server" ID="SecretQuestion_Label" AssociatedControlID="SecretQuestion" CssClass="col-md-2 control-label">Secret Question</asp:Label>
+                            <div class="form-group">                                
+                                <asp:TextBox runat="server" ID="SecretQuestion" CssClass="form-control" />                                
+                            </div>
                             <asp:Label runat="server" ID="NewPass_Label" AssociatedControlID="NewPass" CssClass="col-md-2 control-label">New Password</asp:Label>
                             <div class="form-group">                                
                                 <asp:TextBox runat="server" ID="NewPass" TextMode="Password" CssClass="form-control" />                                
